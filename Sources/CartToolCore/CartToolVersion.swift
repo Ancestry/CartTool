@@ -12,7 +12,7 @@ struct CartToolVersion {
     let minor: Int
     let patch: Int
     
-    static let current: CartToolVersion = CartToolVersion(major: 1, minor: 0, patch: 1)
+    static let current: CartToolVersion = CartToolVersion(major: 1, minor: 0, patch: 4)
 }
 
 extension CartToolVersion: CustomStringConvertible {
