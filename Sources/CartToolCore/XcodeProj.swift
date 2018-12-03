@@ -38,20 +38,34 @@ func wrapCarthageCopyFrameworks() throws {
     print("Resolved frameworks for `carthage copy-frameworks`:")
     inputs.forEach { print($0) }
     
+    let fm = FileManager.default
+    let inputsOutputs: [(String, String)] = try zip(inputs, outputs).compactMap { inOut in
+        let sourceAttributes = try fm.attributesOfItem(atPath: inOut.0)
+        let destAttributes = try fm.attributesOfItem(atPath: inOut.1)
+        if let sourceModDate = sourceAttributes[.modificationDate] as? Date,
+            let destModDate = destAttributes[.modificationDate] as? Date,
+            sourceModDate <= destModDate {
+            print("Skipping \(inOut.0) (\(sourceModDate)) because it is not newer than \(inOut.1) (\(destModDate))")
+            return nil
+        }
+        
+        return inOut
+    }
+
     var env: [String: String] = ProcessInfo.processInfo.environment
-    let inputsOutputs = zip(inputs, outputs)
-    
     for (idx, inOut) in inputsOutputs.enumerated() {
         let iKey = "SCRIPT_INPUT_FILE_\(idx)"
         env[iKey] = inOut.0
         let oKey = "SCRIPT_OUTPUT_FILE_\(idx)"
         env[oKey] = inOut.1
     }
-    let countString = String(inputs.count)
+    let countString = String(inputsOutputs.count)
     env["SCRIPT_INPUT_FILE_COUNT"] = countString
     env["SCRIPT_OUTPUT_FILE_COUNT"] = countString
     
-    try shell(env: env, "carthage", "copy-frameworks")
+    if !inputsOutputs.isEmpty {
+        try shell(env: env, "carthage", "copy-frameworks")
+    }
     
     try wrapVerifyDependencies()
 }
