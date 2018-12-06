@@ -71,6 +71,14 @@ git "http://stash01.test.com/scm/mif/acapikit.git" "f2625df41ff4b0f33d9d21e3ba41
             XCTFail("getDependencies threw error: \(error)")
         }
     }
+    
+    func testRemoveLastPathComponent() {
+        let expected = "/Carthage/Build/iOS/Result.framework"
+        let path = Path(expected + "/Result")
+        let result = path.removeLastPathComponent().absolute
+        
+        XCTAssertEqual(expected, result)
+    }
 }
 
 func unwrap<T>(_ opt: Optional<T>) throws -> T {

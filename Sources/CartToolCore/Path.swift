@@ -46,7 +46,7 @@ struct Path: ExpressibleByStringLiteral, Hashable {
         var split = absolute.split(separator: "/")
         _ = split.popLast()
         
-        return Path(split.joined(separator: "/"))
+        return Path("/" + split.joined(separator: "/"))
     }
     
     private static func removeDotDotsAndTrim(_ path: String) -> String {

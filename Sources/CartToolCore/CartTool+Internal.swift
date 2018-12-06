@@ -34,7 +34,7 @@ func wrapCarthageCopyFrameworks() throws {
     }
     
     print("Resolved frameworks for `carthage copy-frameworks`:")
-    inputs.forEach { print($0) }
+    inputs.forEach { print($0.absolute) }
     
     let fm = FileManager.default
     let inputsOutputs: [(Path, Path)] = zip(inputs, outputs).compactMap { inOut in
