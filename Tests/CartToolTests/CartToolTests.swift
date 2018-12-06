@@ -54,9 +54,24 @@ git "http://stash01.test.com/scm/mif/acapikit.git" "f2625df41ff4b0f33d9d21e3ba41
         XCTAssertEqual(ra[0], "/Users/foo/Library/DerivedData/Debug-iphonesimulator")
         XCTAssertEqual(ra[1], "/Users/foo/code/IOS Project/Source/Carthage/Build/iOS")
     }
+    
+    func testGetDependencies() {
+        let projectPath = Path(#file).parent.parent.pathByAppending(component: "Resources")
+        let appPath = projectPath.pathByAppending(component: "TestApp.app/TestApp")
+        let frameworksPath = projectPath.pathByAppending(component: "Carthage/Build/iOS")
+        
+        setenv("FRAMEWORK_SEARCH_PATHS", frameworksPath.absolute, 1)
+        let expected: Set<String> = ["SwiftBits.framework", "FBSDKLoginKit.framework", "FBSDKCoreKit.framework", "Bolts.framework"]
+        
+        do {
+            let result = try Set(getDependencies(appPath: appPath).map { $0.baseName })
+            XCTAssertEqual(expected, result)
+        }
+        catch {
+            XCTFail("getDependencies threw error: \(error)")
+        }
+    }
 }
-
-
 
 func unwrap<T>(_ opt: Optional<T>) throws -> T {
     guard let value = opt else { throw "Expected .some" }
