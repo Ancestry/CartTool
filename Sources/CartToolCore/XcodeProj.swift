@@ -43,7 +43,7 @@ func wrapCarthageCopyFrameworks() throws {
         if let sourceModDate = sourceAttributes?[.modificationDate] as? Date,
             let destModDate = destAttributes?[.modificationDate] as? Date,
             sourceModDate <= destModDate {
-            print("Skipping \(inOut.0) (\(sourceModDate)) because it is not newer than \(inOut.1) (\(destModDate))")
+            print("Skipping \(inOut.0.absolute) (\(sourceModDate)) because it is not newer than \(inOut.1.absolute) (\(destModDate))")
             return nil
         }
         
