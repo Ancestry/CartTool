@@ -1,0 +1,11 @@
+framework module SwiftBits {
+  umbrella header "SwiftBits.h"
+
+  export *
+  module * { export * }
+}
+
+module SwiftBits.Swift {
+    header "SwiftBits-Swift.h"
+    requires objc
+}

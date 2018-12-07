@@ -45,35 +45,7 @@ git "http://stash01.test.com/scm/mif/acapikit.git" "f2625df41ff4b0f33d9d21e3ba41
         XCTAssertNotNil(URL(string: entries[0].remoteURL))
         XCTAssertEqual("https://github.com/utahiosmac/Marshal.git", entries[0].remoteURL)
     }
-    
-    func testProjectParsing() throws {
-        let thisFile = Path(#file)
-        let projectFile = thisFile.parent.parent.pathByAppending(component: "Resources/TestProject.xcodeproj").absolute
         
-        let carthageFrameworks = try getCarthageFrameworks(target: "TestProject", xcodeprojFolder: projectFile)
-        
-        XCTAssertEqual(3, carthageFrameworks.count)
-    }
-    
-    func testVerifyFrameworks() {
-        let thisFile = Path(#file)
-        let success = thisFile.parent.parent.pathByAppending(component: "Resources/TestFrameworkSuccess.app")
-        let fail = thisFile.parent.parent.pathByAppending(component: "Resources/TestFrameworkFail.app")
-        
-        XCTAssertNoThrow(try verifyDependencies(appPath: success))
-        XCTAssertThrowsError(try verifyDependencies(appPath: fail)) { error in
-            guard "\(error)".contains("Bolts") else { return XCTFail() }
-        }
-    }
-    
-    func testWorkspaceParsing() throws {
-        let thisFile = Path(#file)
-        let workspaceFile = thisFile.parent.parent.pathByAppending(component: "Resources/FacebookSDK.xcworkspace").absolute
-        
-        let projects = try extractProjectsFrom(xcworkspacePath: workspaceFile)
-        XCTAssertEqual(6, projects.count)
-    }
-    
     func testEnvVarSplitter() {
         let escapedValue = "/Users/foo/Library/DerivedData/Debug-iphonesimulator /Users/foo/code/IOS\\ Project/Source/Carthage/Build/iOS"
         
@@ -82,9 +54,32 @@ git "http://stash01.test.com/scm/mif/acapikit.git" "f2625df41ff4b0f33d9d21e3ba41
         XCTAssertEqual(ra[0], "/Users/foo/Library/DerivedData/Debug-iphonesimulator")
         XCTAssertEqual(ra[1], "/Users/foo/code/IOS Project/Source/Carthage/Build/iOS")
     }
+    
+    func testGetDependencies() {
+        let projectPath = Path(#file).parent.parent.pathByAppending(component: "Resources")
+        let appPath = projectPath.pathByAppending(component: "TestApp.app/TestApp")
+        let frameworksPath = projectPath.pathByAppending(component: "Carthage/Build/iOS")
+        
+        setenv("FRAMEWORK_SEARCH_PATHS", frameworksPath.absolute, 1)
+        let expected: Set<String> = ["SwiftBits.framework", "FBSDKLoginKit.framework", "FBSDKCoreKit.framework", "Bolts.framework"]
+        
+        do {
+            let result = try Set(getDependencies(appPath: appPath).map { $0.baseName })
+            XCTAssertEqual(expected, result)
+        }
+        catch {
+            XCTFail("getDependencies threw error: \(error)")
+        }
+    }
+    
+    func testRemoveLastPathComponent() {
+        let expected = "/Carthage/Build/iOS/Result.framework"
+        let path = Path(expected + "/Result")
+        let result = path.removeLastPathComponent().absolute
+        
+        XCTAssertEqual(expected, result)
+    }
 }
-
-
 
 func unwrap<T>(_ opt: Optional<T>) throws -> T {
     guard let value = opt else { throw "Expected .some" }

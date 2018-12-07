@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Path: ExpressibleByStringLiteral {
+struct Path: ExpressibleByStringLiteral, Hashable {
     typealias StringLiteralType = String
     
     init(stringLiteral rawValue: String) {
@@ -42,6 +42,13 @@ struct Path: ExpressibleByStringLiteral {
         return Path(absolute + "/" + trimmed)
     }
     
+    func removeLastPathComponent() -> Path {
+        var split = absolute.split(separator: "/")
+        _ = split.popLast()
+        
+        return Path("/" + split.joined(separator: "/"))
+    }
+    
     private static func removeDotDotsAndTrim(_ path: String) -> String {
         let trimmed: String = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         let components = trimmed.components(separatedBy: "/")
@@ -56,4 +63,3 @@ struct Path: ExpressibleByStringLiteral {
         return "/" + newComponents.joined(separator: "/")
     }
 }
-

@@ -34,7 +34,6 @@ public final class CartTool {
             let workspaceName = mkworkspaceParser.add(positional: "workspace-name", kind: String.self)
             let workspaceRepos = mkworkspaceParser.add(positional: "repos", kind: [String].self, optional: true)
             
-            _ = parser.add(subparser: "verify-dependencies", overview: "Verify that all required frameworks are properly embedded in the project. Intended to be used in an Xcode Run Script.")
             _ = parser.add(subparser: "list", overview: "List dependencies.")
             _ = parser.add(subparser: "copy-frameworks", overview: "Used as an Xcode Run Script.")
             _ = parser.add(subparser: "version", overview: "Prints the current version number of carttool.")
@@ -48,8 +47,6 @@ public final class CartTool {
             }
             
             switch subcommand {
-            case "verify-dependencies":
-                try wrapVerifyDependencies()
             case "copy-frameworks":
                 try wrapCarthageCopyFrameworks()
             case "list":
@@ -275,16 +272,6 @@ public final class CartTool {
         }
         
         var projects: [String] = []
-        
-        // first look for a workspace
-        if let workspaceFolder = try fm.contentsOfDirectory(atPath: folder.absolute).first(where: { $0.hasSuffix(".xcworkspace") }) {
-            projects = try extractProjectsFrom(xcworkspacePath: folder.pathByAppending(component: workspaceFolder).absolute)
-                .filter { try projectHasSharedSchemes(projectFolder: Path($0)) }
-        }
-        
-        if projects.count > 0 {
-            return projects
-        }
         
         for item in try fm.contentsOfDirectory(atPath: folder.absolute) {
             let projectPath = folder.pathByAppending(component: item)
