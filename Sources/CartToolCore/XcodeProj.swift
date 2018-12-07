@@ -1,5 +1,5 @@
 //
-//  CartTool+Internal.swift
+//  XcodeProj.swift
 //
 //  Created by Bart Whiteley on 1/28/18.
 //  Copyright (c) 2018 Ancestry.com. All rights reserved.
