@@ -21,7 +21,9 @@ struct Path: ExpressibleByStringLiteral, Hashable {
         } else {
             path = FileManager.default.currentDirectoryPath + "/" + string
         }
-        self.absolute = Path.removeDotDotsAndTrim(path)
+        
+        let resolved = URL(fileURLWithPath: path).resolvingSymlinksInPath().path
+        self.absolute = Path.removeDotDotsAndTrim(resolved)
     }
     
     let absolute: String
