@@ -77,7 +77,7 @@ git "http://stash01.test.com/scm/mif/acapikit.git" "f2625df41ff4b0f33d9d21e3ba41
         let symlink = basePath.pathByAppending(component: "SwiftBits.framework").absolute
         let expected = basePath.pathByAppending(component: "Carthage/Build/iOS/SwiftBits.framework").absolute
         
-        let result = Path(symlink).absolute
+        let result = Path(symlink).resolved
         
         XCTAssertEqual(result, expected)
     }
