@@ -53,7 +53,7 @@ func wrapCarthageCopyFrameworks() throws {
     var env: [String: String] = ProcessInfo.processInfo.environment
     for (idx, inOut) in inputsOutputs.enumerated() {
         let iKey = "SCRIPT_INPUT_FILE_\(idx)"
-        env[iKey] = inOut.0.absolute
+        env[iKey] = inOut.0.resolved
         let oKey = "SCRIPT_OUTPUT_FILE_\(idx)"
         env[oKey] = inOut.1.absolute
     }

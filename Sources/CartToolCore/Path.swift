@@ -21,10 +21,15 @@ struct Path: ExpressibleByStringLiteral, Hashable {
         } else {
             path = FileManager.default.currentDirectoryPath + "/" + string
         }
+        
         self.absolute = Path.removeDotDotsAndTrim(path)
     }
     
     let absolute: String
+    
+    var resolved: String {
+        return URL(fileURLWithPath: absolute).resolvingSymlinksInPath().path
+    }
     
     var baseName: String {
         return absolute.components(separatedBy: "/").last ?? ""
