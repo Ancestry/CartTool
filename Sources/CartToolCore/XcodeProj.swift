@@ -89,22 +89,17 @@ internal func getDependencies(appPath: Path) throws -> Set<Path> {
     return Set(dependencies.map { $0.removeLastPathComponent() })
 }
 
-private func otool(path: Path) -> Set<String> {
-    do {
-        let output = try shellOutput("otool", "-L", path.absolute)
-        let frameworks = output.components(separatedBy: .newlines)
-            .filter { !$0.isEmpty }
-            .map { $0.components(separatedBy: "(").first! }
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-            .filter { $0.hasPrefix("@rpath") }
-            .filter { !$0.contains("libswift") }
-            .map { $0.replacingOccurrences(of: "@rpath/", with: "") }
-        
-        return Set(frameworks)
-    } catch {
-        print("Failed to get otool output from \(path)")
-        return []
-    }
+private func otool(path: Path) throws -> Set<String> {
+    let output = try shellOutput("otool", "-L", path.absolute)
+    let frameworks = output.components(separatedBy: .newlines)
+        .filter { !$0.isEmpty }
+        .map { $0.components(separatedBy: "(").first! }
+        .map { $0.trimmingCharacters(in: .whitespaces) }
+        .filter { $0.hasPrefix("@rpath") }
+        .filter { !$0.contains("libswift") }
+        .map { $0.replacingOccurrences(of: "@rpath/", with: "") }
+    
+    return Set(frameworks)
 }
 
 private func frameworkNames(from paths: [Path]) -> [String] {
