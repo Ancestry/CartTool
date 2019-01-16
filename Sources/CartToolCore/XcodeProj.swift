@@ -22,10 +22,8 @@ func wrapCarthageCopyFrameworks() throws {
     
     let builtProductsDir = try getEnv("BUILT_PRODUCTS_DIR")
     let frameworksFolderPath = try getEnv("FRAMEWORKS_FOLDER_PATH")
-    let executableName = try getEnv("EXECUTABLE_NAME")
-    let appPath = Path(builtProductsDir)
-        .pathByAppending(component: "\(executableName).app")
-        .pathByAppending(component: executableName)
+    let executablePath = try getEnv("EXECUTABLE_PATH")
+    let appPath = Path(builtProductsDir).pathByAppending(component: executablePath)
     let frameworksTargetDir = Path(builtProductsDir).pathByAppending(component: frameworksFolderPath)
     
     let inputs = try getDependencies(appPath: appPath)
