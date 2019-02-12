@@ -17,23 +17,23 @@
 	
 The output is similar to the contents of `Cartfile.resolved`. One difference is that all repos are listed as an URL suitable for pasting into `git clone` or similar. 
 	
-## `copy-carthage-frameworks`
+## `copy-frameworks`
 
-In place of the standard `carthage copy-frameworks` Run Script Build Phase, add a Build Phase with the script `carttool copy-carthage-frameworks`. You can omit the Input Files and Output Files. Just make sure the frameworks listed in Linked Frameworks and Libraries are correct. Note that you have to include all frameworks, including transitive dependencies in Linked Frameworks and Libraries for this to work. Do not include Carthage-built frameworks in Embedded Binaries.
+In place of the standard `carthage copy-frameworks` Run Script Build Phase, add a Build Phase with the script `carttool copy-frameworks`. You can omit the Input Files and Output Files. Just make sure the frameworks listed in Linked Frameworks and Libraries are correct. You only have to include direct dependencies in Linked Frameworks and Libraries. CartTool will take care of transitive dependencies. Do not include Carthage-built frameworks in Embedded Binaries.
 
-`carttool copy-carthage-frameworks` will first look for frameworks in Derived Data, and then fall back to looking for frameworks under `Carthage/Build/<platform>`. This facilitates switching dependencies to "development mode". If you include a dependency in a workspace with your current project, the framework built from the workspace will be used instead of the Carthage-built framework. 
+`carttool copy-frameworks` will first look for frameworks in Derived Data, and then fall back to looking for frameworks under `Carthage/Build/<platform>`. This facilitates switching dependencies to "development mode". If you include a dependency in a workspace with your current project, the framework built from the workspace will be used instead of the Carthage-built framework. 
 
 ## Create a Workspace 
 
-Create a workspace called `Foo.workspace` with the current project and all dependencies:
+Create a workspace called `All.workspace` with the current project and all dependencies:
 
-	carttool mkworkspace Foo
+	carttool mkworkspace All
 	
 To create a workspace called `Foo.workspace` with the current project and two dependencies:
 
 	carttool mkworkspace Foo Logger Authentication
 
-This tool automates a few steps. You could accomplish the same thing by creating a new workspace and dragging in the current project as well as the projects under `Carthage/Checkouts/*`. You can drag in projects from other locations as well. For example, you might already have a dependency checked out in a different folder. You could delete a project reference (created by `carttool`) from the workspace and drag in your project from the other folder.
+`carttool mkworkspace` automates a few steps. You could accomplish the same thing by creating a new workspace and dragging in the current project as well as the projects under `Carthage/Checkouts/*`. You can drag in projects from other locations as well. For example, you might already have a dependency checked out in a different folder. You could delete a project reference (created by `carttool`) from the workspace and drag in your project from the other folder.
 
 ## Checkout a dependency for development
 
