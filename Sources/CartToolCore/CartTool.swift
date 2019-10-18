@@ -235,7 +235,7 @@ public final class CartTool {
         for project in projectFiles {
             fileContents += """
                     <FileRef
-                        location = "group:\(project)">
+                        location = "group:\(Path(project).pathRelativeToCurrentDirectory)">
                     </FileRef>
             
             """
