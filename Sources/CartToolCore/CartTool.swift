@@ -200,6 +200,13 @@ public final class CartTool {
             if !fm.fileExists(atPath: dotGit.absolute) {
                 makeFolderReadOnly(folder)
             }
+            let carthageSubfolder = folder.pathByAppending(component: "Carthage")
+            let buildLinkDestination = carthageSubfolder.pathByAppending(component: "Build")
+            // if Carthage subfolder does not exist there are no dependencies, so we don't need a Build symlink.
+            if fm.fileExists(atPath: carthageSubfolder.absolute) &&
+                !fm.fileExists(atPath: buildLinkDestination.absolute) {
+                try fm.createSymbolicLink(atPath: buildLinkDestination.absolute, withDestinationPath: "../../../Build")
+            }
             projectFiles += try projectsWithin(folder: folder)
         }
         
