@@ -28,8 +28,12 @@ struct Path: ExpressibleByStringLiteral, Hashable {
     var currentDirectory: String { FileManager.default.currentDirectoryPath }
     
     func pathRelativeTo(_ folder: String) -> String {
-        let commonPrefix = absolute.commonPrefix(with: currentDirectory, options: .caseInsensitive) + "/"
-        return String(absolute.suffix(absolute.count - commonPrefix.count))
+        let commonPrefix = absolute.commonPrefix(with: currentDirectory, options: .caseInsensitive)
+        var relativePath = String(absolute.suffix(absolute.count - commonPrefix.count))
+        while relativePath.hasPrefix("/") {
+            relativePath = String(relativePath.suffix(from: relativePath.index(after: relativePath.startIndex)))
+        }
+        return relativePath
     }
     
     var pathRelativeToCurrentDirectory: String {
