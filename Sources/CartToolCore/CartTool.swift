@@ -190,6 +190,8 @@ public final class CartTool {
         
         var projectFiles: [String] = []
         
+        try? fm.createDirectory(atPath: Path("Carthage/Build").absolute, withIntermediateDirectories: true, attributes: nil)
+        
         for repo in repoNames {
             let folder = Path("Carthage/Checkouts").pathByAppending(component: repo)
             let dotGit = folder.pathByAppending(component: ".git")
@@ -205,7 +207,12 @@ public final class CartTool {
             // if Carthage subfolder does not exist there are no dependencies, so we don't need a Build symlink.
             if fm.fileExists(atPath: carthageSubfolder.absolute) &&
                 !fm.fileExists(atPath: buildLinkDestination.absolute) {
-                try fm.createSymbolicLink(atPath: buildLinkDestination.absolute, withDestinationPath: "../../../Build")
+                do {
+                    try fm.createSymbolicLink(atPath: buildLinkDestination.absolute, withDestinationPath: "../../../Build")
+                }
+                catch {
+                    print("non-fatal error creating symlink \(buildLinkDestination.absolute): \(error.localizedDescription)")
+                }
             }
             projectFiles += try projectsWithin(folder: folder)
         }
