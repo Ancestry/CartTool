@@ -95,6 +95,7 @@ private func otool(path: Path) throws -> Set<String> {
         .map { $0.trimmingCharacters(in: .whitespaces) }
         .filter { $0.hasPrefix("@rpath") }
         .filter { !$0.contains("libswift") }
+        .filter { !$0.contains("libclang_rt") }
         .map { $0.replacingOccurrences(of: "@rpath/", with: "") }
     
     return Set(frameworks)
